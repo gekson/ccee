@@ -30,4 +30,11 @@ public class Agente {
     @JacksonXmlProperty(localName = "regiao")
     @JacksonXmlElementWrapper(useWrapping = false)
     private List<Regiao> regiao = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "Agente{" +
+                "codigo='" + codigo + '\'' +
+                '}';
+    }
 }
