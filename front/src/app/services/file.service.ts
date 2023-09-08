@@ -1,6 +1,7 @@
 import { HttpClient, HttpEvent, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+// import * as converter from 'xml-js';
 
 @Injectable({
   providedIn: 'root'
@@ -23,4 +24,13 @@ export class FileService {
     return this.http.request(req);
     
   }
+
+  // proccessFile(file: File) {
+  //   let xml = file;
+  //   let result1 = converter.xml2json(xml, {compact: true, spaces: 4});
+
+  //   const JSONData = JSON.parse(result1);
+    
+  //   return file;
+  // }
 }
