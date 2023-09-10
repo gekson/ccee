@@ -10,6 +10,9 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -21,6 +24,8 @@ import java.util.Set;
 @Entity
 @Table(name="agentes")
 @Data
+@NoArgsConstructor
+@RequiredArgsConstructor
 @JacksonXmlRootElement(localName = "Agente")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Agente {
@@ -29,9 +34,11 @@ public class Agente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NonNull
     @JacksonXmlProperty(isAttribute = true)
     private String codigo;
 
+    @NonNull
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss[.SSS]XXX")
     @JacksonXmlProperty
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -41,7 +48,7 @@ public class Agente {
     @JacksonXmlProperty(localName = "regiao")
     @JacksonXmlElementWrapper(useWrapping = false)
     @ManyToMany(cascade=CascadeType.MERGE)
-    private Set<Regiao> regiao = new HashSet<>();
+    private List<Regiao> regiao = new ArrayList<>();
 
     @Override
     public String toString() {

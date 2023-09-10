@@ -24,10 +24,10 @@ public class Geracao {
 
     @JacksonXmlProperty(localName = "ValorGeracao")
     @JacksonXmlElementWrapper(useWrapping = false)
-    @OneToMany(mappedBy="geracao")
-    private Set<ValorGeracao> valor= new HashSet<>();
+    @OneToMany(mappedBy="geracao", cascade=CascadeType.ALL)
+    private List<ValorGeracao> valor= new ArrayList<>();
 
-    @ManyToOne(cascade=CascadeType.PERSIST)
+    @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name="regiao_id")
     private Regiao regiao;
 }

@@ -28,9 +28,9 @@ public class Regiao {
 
     @JacksonXmlProperty(localName = "geracao")
     @JacksonXmlElementWrapper(useWrapping = false)
-    @OneToMany(mappedBy="regiao")
-    private Set<Geracao> geracao = new HashSet<>();
+    @OneToMany(mappedBy="regiao", cascade = CascadeType.ALL)
+    private List<Geracao> geracao = new ArrayList<>();
 
-    @ManyToMany(cascade=CascadeType.PERSIST)
-    private Set<Agente> agentes;
+    @ManyToMany(cascade=CascadeType.MERGE)
+    private List<Agente> agentes;
 }

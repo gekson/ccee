@@ -3,6 +3,8 @@ package com.ccee.challenge.controller;
 import com.ccee.challenge.model.Agente;
 import com.ccee.challenge.dto.AgentesDTO;
 import com.ccee.challenge.service.AgenteService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,9 +43,16 @@ public class AgenteController {
             agenteService.salvarAgentes(agentes.getAgentes());
             System.out.println(agentes);
 
-            ResponseEntity.ok();
+            ResponseEntity.ok("Agentes cadastrados com sucesso.");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @RequestMapping(value = "/findDadosPorRegiao/{sigla}", method = RequestMethod.GET)
+    public ResponseEntity findDadosPorRegiao(@PathVariable(name = "sigla") String sigla) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonArray = objectMapper.writeValueAsString(agenteService.findDadosPorRegiao(sigla));
+        return ResponseEntity.ok(jsonArray);
     }
 }
