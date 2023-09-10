@@ -2,7 +2,10 @@ package com.ccee.challenge.controller;
 
 import com.ccee.challenge.model.Agente;
 import com.ccee.challenge.dto.AgentesDTO;
+import com.ccee.challenge.service.AgenteService;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,24 +14,20 @@ import java.io.File;
 import java.io.IOException;
 
 @RestController
+@RequiredArgsConstructor
 public class AgenteController {
 
+    private final AgenteService agenteService;
     private final String TEMP_STORAGE = System.getProperty("java.io.tmpdir");
 
-    @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public String uploadAgente(@RequestBody Agente agente) {
+    @RequestMapping(value = "/uploadJson", method = RequestMethod.POST)
+    public String uploadAgentes(@RequestBody Agente agente) {
         System.out.println(agente);
         return "Agente salvo " + agente;
     }
 
-    @PostMapping(path = "/importData")
-    public void startBatch(@RequestParam("file") MultipartFile multipartFile) {
-
-
-        // file  -> path we don't know
-        //copy the file to some storage in your VM : get the file path
-        //copy the file to DB : get the file path
-
+    @PostMapping(path = "/fileUpload")
+    public void fileUpload(@RequestParam("file") MultipartFile multipartFile) {
         try {
             String originalFileName = multipartFile.getOriginalFilename();
             ResourceUtils.getURL("classpath:application.properties");
@@ -37,25 +36,10 @@ public class AgenteController {
 
             XmlMapper xmlMapper = new XmlMapper();
             AgentesDTO agentes = xmlMapper.readValue(fileToImport, AgentesDTO.class);
-//            Agente agentes = xmlMapper.readValue(fileToImport, Agente.class);
+            agenteService.salvarAgentes(agentes.getAgentes());
             System.out.println(agentes);
 
-//            Agente a = new Agente("2","3");
-//            JobParameters jobParameters = new JobParametersBuilder()
-//                    .addString("fullPathFileName", TEMP_STORAGE + originalFileName)
-//                    .addLong("startAt", System.currentTimeMillis()).toJobParameters();
-//
-//            JobExecution execution = jobLauncher.run(job, jobParameters);
-
-//            if(execution.getExitStatus().getExitCode().equals(ExitStatus.COMPLETED)){
-//                //delete the file from the TEMP_STORAGE
-//                Files.deleteIfExists(Paths.get(TEMP_STORAGE + originalFileName));
-//            }
-
-//        } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException | IOException e) {
-//
-//            e.printStackTrace();
-//        }
+            ResponseEntity.ok();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

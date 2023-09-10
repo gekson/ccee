@@ -13,6 +13,7 @@ export class FileUploadComponent implements OnInit {
     currentFile?: File;
     progress = 0;
     message = '';
+    currentJSON? = {};
   
     fileName = 'Selecione o arquivo';
     fileInfos?: Observable<any>;
@@ -25,6 +26,10 @@ export class FileUploadComponent implements OnInit {
   
     
 
+    /**
+     * Seleciona um arquivo
+     * @param event 
+     */
     selectFile(event: any): void {
       if (event.target.files && event.target.files[0]) {
         const file: File = event.target.files[0];
@@ -34,41 +39,20 @@ export class FileUploadComponent implements OnInit {
         const reader = new FileReader();
         reader.onload = (e: any) => {
           let xml = e.target.result;
+          // console.log(xml)
           
           let result1 = converter.xml2json(xml, {compact: true, spaces: 4});
-          // var options = {compact: true, elementNameFn: function(val: string) {return val.replace('precoMedio:','CASA')}};
-          // let result1 = converter.xml2json(xml, options);
-          const JSONData = JSON.parse(result1);
-          // const jsonAsArray = Array.from(JSONData);
-          // console.log(jsonAsArray);
-          // console.log(result1);
-          // console.log('JSON',JSONData);
-          // //delete JSONData[JSONData.agentes.agente.regiao.precoMedio];
-          // console.log(this.findPath(JSONData.agentes.agente, 'precoMedio'));
-          // console.log(JSONData.agentes.agente);
-
-
-        //   for(const index in JSONData) {
-        //     alert(JSON.stringify(JSONData[index]));
-        // }
-
-        //** Apaga precoMedio */
-        console.log(JSONData.agentes)
-          JSONData.agentes.agente.forEach(function(obj: teste){
-            var regiao = obj.regiao;
-            regiao.forEach(function(regiao){
-              regiao.precoMedio = [{ valor: [] }];
-            });
+          const JSONData = this.limpaPrecoMedio(JSON.parse(result1));
+          this.currentJSON = JSONData;
+          // console.log(JSONData)
+          let options = {compact: true, ignoreComment: true, spaces: 4};
+          let result = converter.js2xml(JSONData, options);
+          console.log('XML',result);
+          // this.currentJSON = result;
+          const newFile = new File([result], "result.xml", {
+            type: "text/plain",
           });
-          console.log(JSONData.agentes)
-        
-          console.log(JSONData)
-          // this.jsonToObj(JSONData);
-
-
-
-          // const map = new Map(Object.entries(JSON.parse(result1)));
-          // console.log(this.findPath(map, 'precoMedio'));
+          this.currentFile = newFile;
 
         }
         reader.readAsText(event.target.files[0])
@@ -77,12 +61,16 @@ export class FileUploadComponent implements OnInit {
       }
     }
   
+    /**
+     * Upload de um arquivo
+     */
     upload(): void {
       this.progress = 0;
       this.message = "";
   
       if (this.currentFile) {
         this.uploadService.upload(this.currentFile).subscribe(
+        // this.uploadService.sendJson(this.currentJSON).subscribe(
           (event: any) => {
             if (event.type === HttpEventType.UploadProgress) {
               this.progress = Math.round(100 * event.loaded / event.total);
@@ -107,55 +95,28 @@ export class FileUploadComponent implements OnInit {
   
     }
 
-    findPath(array: Array<string>, val: any): any {
-      // console.log(Array.isArray(array))
-      //console.log(array.agentes)
-      // let myMap = new Map(Object.entries(array));
-      // console.log(myMap)
-      // const findKey = Object.keys(myMap).find(key => key.includes('agentes'));
-      //   console.log('key',findKey);
-
-      // console.log(array.typeof);
-      // const clearArray = array.map((obj: teste) => {
-      //   console.log('obj', obj);
-        
-      //   // Find 'consultas' key in the object
-      //   const findKey = Object.keys(obj).find(key => key.includes('precoMedio'));
-      //   console.log('key',findKey);
-      //   if (findKey) {
-      //     // Delete key from the object with array
-      //     //delete obj[findKey];
-      //   }
-      //   return obj; // Returning object to array without 'consultas'
-      // });
-      // return clearArray;
-
-// console.log(array.entries);
-//       return array.entries
-
-      // console.log(array);
-      // array.agentes.forEach(function(agentes: { subBrands: any[]; }) {
-      //   agentes.subBrands = agentes.subBrands.filter(function(subBrand){
-      //     console.log(subBrand)
-      //     return subBrand.id != 31;
-      // })  
-    // });
-    
-    }
-
-    jsonToObj(json: any) {
-      json.forEach(function(obj: teste){
+    /**
+     * Limpa os  preços Medio, para não enviar para a API.
+     * @param jsonData 
+     * @returns Json
+     */
+    limpaPrecoMedio(jsonData: any): any {
+      //** Apaga precoMedio */
+      // console.log(jsonData.agentes)
+      jsonData.agentes.agente.forEach(function(obj: IAgente){
         var regiao = obj.regiao;
         regiao.forEach(function(regiao){
-          console.log(regiao.precoMedio);
+          regiao.precoMedio = [{ valor: [] }];
         });
       });
+      // console.log(jsonData.agentes)
+    
+      // console.log(jsonData)
+      return jsonData;
     }
 }
 
-  
-
-interface teste {
+interface IAgente {
   codigo: string,
   data: string,
   regiao: [{
