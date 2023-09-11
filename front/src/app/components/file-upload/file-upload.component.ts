@@ -21,10 +21,18 @@ export class FileUploadComponent implements OnInit {
     constructor(private uploadService: FileService) { }
 
     ngOnInit(): void {
-      //this.fileInfos = this.uploadService.getFiles();
+      
     }
   
-    
+
+    /**
+     * Pega a Extensão do aqrquivo
+     * @param filename 
+     * @returns 
+     */
+    getFileExtension(filename: string) {
+      return (filename != '' && filename != undefined && filename != null) ? filename.split('.').pop() : '';
+    }
 
     /**
      * Seleciona um arquivo
@@ -33,22 +41,24 @@ export class FileUploadComponent implements OnInit {
     selectFile(event: any): void {
       if (event.target.files && event.target.files[0]) {
         const file: File = event.target.files[0];
+        if (this.getFileExtension(file.name) != 'xml') {
+          alert("Escolha um arquivo XML");
+          return;
+        }
         this.currentFile = file;
         this.fileName = this.currentFile.name;
         
         const reader = new FileReader();
         reader.onload = (e: any) => {
           let xml = e.target.result;
-          // console.log(xml)
           
           let result1 = converter.xml2json(xml, {compact: true, spaces: 4});
           const JSONData = this.limpaPrecoMedio(JSON.parse(result1));
           this.currentJSON = JSONData;
-          // console.log(JSONData)
+   
           let options = {compact: true, ignoreComment: true, spaces: 4};
           let result = converter.js2xml(JSONData, options);
-          console.log('XML',result);
-          // this.currentJSON = result;
+   
           const newFile = new File([result], "result.xml", {
             type: "text/plain",
           });
@@ -75,8 +85,7 @@ export class FileUploadComponent implements OnInit {
             if (event.type === HttpEventType.UploadProgress) {
               this.progress = Math.round(100 * event.loaded / event.total);
             } else if (event instanceof HttpResponse) {
-              this.message = event.body.message;
-              //this.fileInfos = this.uploadService.getFiles();
+              this.message = 'Agentes cadastrados com sucesso.';
             }
           },
           (err: any) => {
@@ -101,17 +110,12 @@ export class FileUploadComponent implements OnInit {
      * @returns Json
      */
     limpaPrecoMedio(jsonData: any): any {
-      //** Apaga precoMedio */
-      // console.log(jsonData.agentes)
       jsonData.agentes.agente.forEach(function(obj: IAgente){
         var regiao = obj.regiao;
         regiao.forEach(function(regiao){
           regiao.precoMedio = [{ valor: [] }];
         });
       });
-      // console.log(jsonData.agentes)
-    
-      // console.log(jsonData)
       return jsonData;
     }
 }

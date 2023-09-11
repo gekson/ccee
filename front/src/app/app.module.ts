@@ -7,6 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
+import { InterceptorModule } from './http-interceptor.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MatCardModule } from '@angular/material/card';
@@ -16,6 +17,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatListModule } from '@angular/material/list';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 const materialModules = [
   MatCardModule,
@@ -24,7 +26,8 @@ const materialModules = [
   MatInputModule,
   MatFormFieldModule,
   MatProgressBarModule,
-  MatListModule
+  MatListModule,
+  MatProgressSpinnerModule
 ];
 
 @NgModule({
@@ -38,7 +41,8 @@ const materialModules = [
     BrowserAnimationsModule,
     HttpClientModule,
     NoopAnimationsModule,
-    ...materialModules
+    ...materialModules,
+    InterceptorModule
   ],
   providers: [],
   bootstrap: [AppComponent]

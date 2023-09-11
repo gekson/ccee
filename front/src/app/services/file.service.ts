@@ -1,7 +1,7 @@
 import { HttpClient, HttpEvent, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-// import * as converter from 'xml-js';
+import { SpinnerService } from './spinner.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 export class FileService {
   private api = 'http://localhost:8080';
 
-  constructor(private http: HttpClient) { }
+  constructor(public spinnerService: SpinnerService, private http: HttpClient) { }
 
   /**
    * Envia um arquivo XML para a API
@@ -23,7 +23,7 @@ export class FileService {
 
     const req = new HttpRequest('POST', `${this.api}/fileUpload`, formData, {
       reportProgress: true,
-      responseType: 'json'
+      responseType: 'json',
     });
 
     return this.http.request(req);
@@ -31,7 +31,7 @@ export class FileService {
   }
 
   sendJson(jsonData: any): Observable<HttpEvent<any>> {
-    console.log('SERVICO', jsonData);
+    // console.log('SERVICO', jsonData);
     const headers = { 'Content-Type': 'application/json' };
 
     const req = new HttpRequest('POST', `${this.api}/uploadJson`, jsonData, {
@@ -43,13 +43,4 @@ export class FileService {
     return this.http.request(req);
     
   }
-
-  // proccessFile(file: File) {
-  //   let xml = file;
-  //   let result1 = converter.xml2json(xml, {compact: true, spaces: 4});
-
-  //   const JSONData = JSON.parse(result1);
-    
-  //   return file;
-  // }
 }
