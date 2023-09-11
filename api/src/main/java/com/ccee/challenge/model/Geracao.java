@@ -12,22 +12,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Entity
-@Table(name="geracoes")
+//@Entity
+//@Table(name="geracoes")
 @Data
 @JacksonXmlRootElement(localName = "Geracao")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Geracao {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @JacksonXmlProperty(localName = "ValorGeracao")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    @OneToMany(mappedBy="geracao", cascade=CascadeType.ALL)
-    private List<ValorGeracao> valor= new ArrayList<>();
-
-    @ManyToOne(cascade=CascadeType.ALL)
-    @JoinColumn(name="regiao_id")
-    private Regiao regiao;
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
+//
+//    @JacksonXmlProperty(localName = "ValorGeracao")
+//    @JacksonXmlElementWrapper(useWrapping = false)
+//    @OneToMany(mappedBy="geracao", cascade=CascadeType.ALL)
+//    private List<ValorGeracao> valor= new ArrayList<>();
+//
+//    @ManyToOne(cascade=CascadeType.ALL)
+//    @JoinColumn(name="regiao_id")
+//    private Regiao regiao;
 }
