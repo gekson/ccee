@@ -1,0 +1,13 @@
+
+
+<!-- Toolbar -->
+<div class="container">
+  <h3>CCEE</h3>
+  <h4>{{ title }}</h4>
+
+  <app-file-upload></app-file-upload>
+  <mat-spinner mode="indeterminate" [diameter]="50" *ngIf="spinnerService.visibility | async">
+  </mat-spinner>
+</div>
+
+<router-outlet></router-outlet>
