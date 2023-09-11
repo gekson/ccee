@@ -55,4 +55,11 @@ public class AgenteController {
         String jsonArray = objectMapper.writeValueAsString(agenteService.findDadosPorRegiao(sigla));
         return ResponseEntity.ok(jsonArray);
     }
+
+    @RequestMapping(value = "/findConsolidadoRegiao", method = RequestMethod.GET)
+    public ResponseEntity findConsolidadoRegiao() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonArray = objectMapper.writeValueAsString(agenteService.findConsolidadoRegiao());
+        return ResponseEntity.ok(jsonArray);
+    }
 }

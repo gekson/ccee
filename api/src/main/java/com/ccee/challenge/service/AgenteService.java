@@ -1,10 +1,7 @@
 package com.ccee.challenge.service;
 
 import com.ccee.challenge.dto.AgenteDTO;
-import com.ccee.challenge.model.Agente;
-import com.ccee.challenge.model.Geracao;
-import com.ccee.challenge.model.Regiao;
-import com.ccee.challenge.model.ValorGeracao;
+import com.ccee.challenge.model.*;
 import com.ccee.challenge.repository.AgenteRepository;
 import com.ccee.challenge.repository.RegiaoRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,38 +34,25 @@ public class AgenteService {
                 Agente agente = new Agente();
                 BeanUtils.copyProperties(a, agente);
 
-//                a.getRegiao().stream().forEach(regiao -> {
-//                    agente.getRegiao().add(new Regiao());
-//                    BeanUtils.copyProperties(regiao, agente.getRegiao().add(new Regiao()));
-////                    regiao.setId(
-////                        map.get(regiao.getSigla()).getId());
-//                });
-
                 for (int i = 0; i < a.getRegiao().size(); i++) {
-                    agente.getRegiao().add(new Regiao());
-                    BeanUtils.copyProperties(a.getRegiao().get(i), agente.getRegiao().get(i));
+                    agente.getAgentesRegiao().add(new AgenteRegiao());
+                    agente.getAgentesRegiao().get(i).setRegiao(map.get(a.getRegiao().get(i).getSigla()));
+                    agente.getAgentesRegiao().get(i).setAgente(agente);
 
                     for (int j = 0; j < a.getRegiao().get(i).getGeracao().size(); j++) {
-                        agente.getRegiao().get(i).getGeracao().add(new Geracao());
-                        BeanUtils.copyProperties(a.getRegiao().get(i).getGeracao().get(j),
-                                agente.getRegiao().get(i).getGeracao().get(j));
-                        agente.getRegiao().get(i).getGeracao().get(j).setRegiao(
-                                agente.getRegiao().get(i));
-
                         for (int k = 0; k < a.getRegiao().get(i).getGeracao().get(j).getValor().size(); k++) {
-                            agente.getRegiao().get(i).getGeracao().get(j).getValor().add(
-                                    new ValorGeracao(a.getRegiao().get(i).getGeracao().get(j).getValor().get(k)));
-                            agente.getRegiao().get(i).getGeracao().get(j).getValor().get(k).setGeracao(
-                                    agente.getRegiao().get(i).getGeracao().get(j));
+                            agente.getAgentesRegiao().get(i).getValor().add(
+                                    new ValorGeracao(a.getRegiao().get(i).getGeracao().get(j).getValor().get(j)));
+                            agente.getAgentesRegiao().get(i).getValor().get(k).setAgenteRegiao(agente.getAgentesRegiao().get(i));
                         }
                     }
                 }
 
-                agente.getRegiao().stream().forEach(regiao -> {
-                    regiao.setId(
-                            map.get(regiao.getSigla()).getId());
-                    regiaoRepository.save(regiao);
-                });
+//                agente.getRegiao().stream().forEach(regiao -> {
+//                    regiao.setId(
+//                            map.get(regiao.getSigla()).getId());
+//                    regiaoRepository.save(regiao);
+//                });
                 agenteRepository.save(agente);
             }
             return true;
@@ -77,7 +61,11 @@ public class AgenteService {
         }
     }
 
-    public List findDadosPorRegiao(String sigla) {
+    public List<Map<String,Object>> findDadosPorRegiao(String sigla) {
         return regiaoRepository.findDadosPorRegiao(sigla);
+    }
+
+    public List<Map<String,Object>> findConsolidadoRegiao() {
+        return regiaoRepository.findConsolidadoRegiao();
     }
 }
