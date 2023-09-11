@@ -26,5 +26,31 @@ public interface RegiaoRepository extends JpaRepository<Regiao, Long> {
                     "inner join VALORES_GERACAO vg on vg.agente_regiao_id = ar.id\n" +
                     "GROUP BY r.sigla",
             nativeQuery = true)
-    List<Map<String,Object>> findConsolidadoRegiao();
+    List<Map<String,Object>> findConsolidadoValorGeracao();
+
+    @Query(
+            value = "SELECT  r.sigla, sum(vc.valor) as ValorConsolidado  FROM REGIOES r\n" +
+                    "inner join AGENTES_REGIAO ar on r.id = ar.regiao_id\n" +
+                    "inner join AGENTES  a on a.id = ar.agente_id\n" +
+                    "inner join VALORES_COMPRA vc on vc.agente_regiao_id = ar.id\n" +
+                    "GROUP BY r.sigla",
+            nativeQuery = true)
+    List<Map<String,Object>> findConsolidadoValorCompra();
+
+    @Query(
+            value = "SELECT  sigla, sum (ConsolidadoValores) as Total  from (\n" +
+                    "SELECT   sigla, sum(vg.valor) as ConsolidadoValores FROM REGIOES r\n" +
+                    "inner join AGENTES_REGIAO ar on r.id = ar.regiao_id\n" +
+                    "inner join AGENTES  a on a.id = ar.agente_id\n" +
+                    "inner join VALORES_GERACAO vg on vg.agente_regiao_id = ar.id\n" +
+                    "GROUP BY r.sigla\n" +
+                    "UNION\n" +
+                    "SELECT sigla, sum(vc.valor) as ConsolidadoValores   FROM REGIOES r\n" +
+                    "inner join AGENTES_REGIAO ar on r.id = ar.regiao_id\n" +
+                    "inner join AGENTES  a on a.id = ar.agente_id\n" +
+                    "inner join VALORES_COMPRA vc on vc.agente_regiao_id =ar.id\n" +
+                    "GROUP BY r.sigla) virtual\n" +
+                    "GROUP BY sigla",
+            nativeQuery = true)
+    List<Map<String,Object>> findConsolidadoValorTotal();
 }

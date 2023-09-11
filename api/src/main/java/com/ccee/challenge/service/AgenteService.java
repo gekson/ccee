@@ -11,10 +11,8 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -34,25 +32,8 @@ public class AgenteService {
                 Agente agente = new Agente();
                 BeanUtils.copyProperties(a, agente);
 
-                for (int i = 0; i < a.getRegiao().size(); i++) {
-                    agente.getAgentesRegiao().add(new AgenteRegiao());
-                    agente.getAgentesRegiao().get(i).setRegiao(map.get(a.getRegiao().get(i).getSigla()));
-                    agente.getAgentesRegiao().get(i).setAgente(agente);
+                populaRegiao(map, a, agente);
 
-                    for (int j = 0; j < a.getRegiao().get(i).getGeracao().size(); j++) {
-                        for (int k = 0; k < a.getRegiao().get(i).getGeracao().get(j).getValor().size(); k++) {
-                            agente.getAgentesRegiao().get(i).getValor().add(
-                                    new ValorGeracao(a.getRegiao().get(i).getGeracao().get(j).getValor().get(j)));
-                            agente.getAgentesRegiao().get(i).getValor().get(k).setAgenteRegiao(agente.getAgentesRegiao().get(i));
-                        }
-                    }
-                }
-
-//                agente.getRegiao().stream().forEach(regiao -> {
-//                    regiao.setId(
-//                            map.get(regiao.getSigla()).getId());
-//                    regiaoRepository.save(regiao);
-//                });
                 agenteRepository.save(agente);
             }
             return true;
@@ -61,11 +42,50 @@ public class AgenteService {
         }
     }
 
+    private static void populaRegiao(Map<String, Regiao> map, AgenteDTO a, Agente agente) {
+        for (int i = 0; i < a.getRegiao().size(); i++) {
+            agente.getAgentesRegiao().add(new AgenteRegiao());
+            agente.getAgentesRegiao().get(i).setRegiao(map.get(a.getRegiao().get(i).getSigla()));
+            agente.getAgentesRegiao().get(i).setAgente(agente);
+
+            populaValorGeracao(a, agente, i);
+            populaValorCompra(a, agente, i);
+        }
+    }
+
+    private static void populaValorGeracao(AgenteDTO a, Agente agente, int i) {
+        for (int j = 0; j < a.getRegiao().get(i).getGeracao().size(); j++) {
+            for (int k = 0; k < a.getRegiao().get(i).getGeracao().get(j).getValor().size(); k++) {
+                agente.getAgentesRegiao().get(i).getValor().add(
+                        new ValorGeracao(a.getRegiao().get(i).getGeracao().get(j).getValor().get(j)));
+                agente.getAgentesRegiao().get(i).getValor().get(k).setAgenteRegiao(agente.getAgentesRegiao().get(i));
+            }
+        }
+    }
+
+    private static void populaValorCompra(AgenteDTO a, Agente agente, int i) {
+        for (int j = 0; j < a.getRegiao().get(i).getCompra().size(); j++) {
+            for (int k = 0; k < a.getRegiao().get(i).getCompra().get(j).getValor().size(); k++) {
+                agente.getAgentesRegiao().get(i).getValorCompra().add(
+                        new ValorCompra(a.getRegiao().get(i).getCompra().get(j).getValor().get(j)));
+                agente.getAgentesRegiao().get(i).getValorCompra().get(k).setAgenteRegiao(agente.getAgentesRegiao().get(i));
+            }
+        }
+    }
+
     public List<Map<String,Object>> findDadosPorRegiao(String sigla) {
         return regiaoRepository.findDadosPorRegiao(sigla);
     }
 
-    public List<Map<String,Object>> findConsolidadoRegiao() {
-        return regiaoRepository.findConsolidadoRegiao();
+    public List<Map<String,Object>> findConsolidadoValorGeracao() {
+        return regiaoRepository.findConsolidadoValorGeracao();
+    }
+
+    public List<Map<String,Object>> findConsolidadoValorCompra() {
+        return regiaoRepository.findConsolidadoValorCompra();
+    }
+
+    public List<Map<String,Object>> findConsolidadoValorTotal() {
+        return regiaoRepository.findConsolidadoValorTotal();
     }
 }

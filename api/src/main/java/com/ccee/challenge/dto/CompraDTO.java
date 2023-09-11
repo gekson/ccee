@@ -6,23 +6,15 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.Data;
 
-import javax.persistence.Column;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@JacksonXmlRootElement(localName = "Compra")
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JacksonXmlRootElement(localName = "Regiao")
-public class RegiaoDTO {
-    @JacksonXmlProperty
-    @Column(unique=true)
-    private String sigla;
+public class CompraDTO {
 
-    @JacksonXmlProperty(localName = "geracao")
+    @JacksonXmlProperty(localName = "valor")
     @JacksonXmlElementWrapper(useWrapping = false)
-    private List<GeracaoDTO> geracao = new ArrayList<>();
-
-    @JacksonXmlProperty(localName = "compra")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    private List<CompraDTO> compra = new ArrayList<>();
+    private List<Double> valor= new ArrayList<>();
 }

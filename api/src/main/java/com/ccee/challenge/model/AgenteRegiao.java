@@ -24,4 +24,7 @@ public class AgenteRegiao {
 
     @OneToMany(mappedBy="agenteRegiao", cascade=CascadeType.ALL)
     private List<ValorGeracao> valor= new ArrayList<>();
+
+    @OneToMany(mappedBy="agenteRegiao", cascade=CascadeType.ALL)
+    private List<ValorCompra> valorCompra = new ArrayList<>();
 }

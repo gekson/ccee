@@ -14,8 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -56,10 +54,24 @@ public class AgenteController {
         return ResponseEntity.ok(jsonArray);
     }
 
-    @RequestMapping(value = "/findConsolidadoRegiao", method = RequestMethod.GET)
-    public ResponseEntity findConsolidadoRegiao() throws JsonProcessingException {
+    @RequestMapping(value = "/findConsolidadoValorGeracao", method = RequestMethod.GET)
+    public ResponseEntity findConsolidadoValorGeracao() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
-        String jsonArray = objectMapper.writeValueAsString(agenteService.findConsolidadoRegiao());
+        String jsonArray = objectMapper.writeValueAsString(agenteService.findConsolidadoValorGeracao());
+        return ResponseEntity.ok(jsonArray);
+    }
+
+    @RequestMapping(value = "/findConsolidadoValorCompra", method = RequestMethod.GET)
+    public ResponseEntity findConsolidadoValorCompra() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonArray = objectMapper.writeValueAsString(agenteService.findConsolidadoValorCompra());
+        return ResponseEntity.ok(jsonArray);
+    }
+
+    @RequestMapping(value = "/findConsolidadoValorTotal", method = RequestMethod.GET)
+    public ResponseEntity findConsolidadoValorTotal() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonArray = objectMapper.writeValueAsString(agenteService.findConsolidadoValorTotal());
         return ResponseEntity.ok(jsonArray);
     }
 }
